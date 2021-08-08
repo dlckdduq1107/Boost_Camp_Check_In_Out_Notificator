@@ -87,13 +87,13 @@ let resultUser = {};//유저별 값 저장(체크인 안했으면 0 했으면 1)
 async function getName(){//유저코드에 해당하는 실제 이름을 저장하는 역할
     // You probably want to use a database to store any user information ;)
     try {
-    // Call the users.list method using the WebClient(프로젝트의 유저 리스트를 불러온다.)
-    const result = await client.users.list();
+        // Call the users.list method using the WebClient(프로젝트의 유저 리스트를 불러온다.)
+        const result = await client.users.list();
 
-    saveUsers(result.members);//유저 정보 저장
+        saveUsers(result.members);//유저 정보 저장
     }
     catch (error) {
-    console.error(error);
+        console.error(error);
     }
 
     
