@@ -83,6 +83,7 @@ async function history(id){
 
 
 let usersStore = {};//유저 코드 : J~이름
+let usersReverseStore = {};//J~이름 : 유저 코드
 let resultUser = {};//유저별 값 저장(체크인 안했으면 0 했으면 1)
 async function getName(){//유저코드에 해당하는 실제 이름을 저장하는 역할
     // You probably want to use a database to store any user information ;)
@@ -110,7 +111,7 @@ async function getName(){//유저코드에 해당하는 실제 이름을 저장�
                 // Store the entire user object (you may not need all of the info)
                 usersStore[userId] = realName;//id : 실제이름 매칭
                 resultUser[userId] = 0;//체크인 결과 객체에 초기화
-                
+                usersReverseStore[realName] = userId;//실제이름 : id매칭
             }
             
         });
@@ -138,13 +139,17 @@ const check = async function (){//특정스레드에 댓글을 달지 않은 인
 
         notCheckList = Object.keys(resultUser).map((key)=>{//체크인 결과 객체를 돌면서
                         if(resultUser[key] === 0){//해당 값이 0이면 체크인 하지 않음
-                            return key;//해당 유저 코드 리턴
+                            return usersStore[key];//해당 유저 이름 리턴
                         }
                         else{//체크인 한 경우
                             return "";
                         }
                     });
-        notCheckList = notCheckList.filter((val)=>val);//체크인 하지 않은 코드만 필터링
+        notCheckList = notCheckList.filter((val)=>val);//체크인 하지 않은 이름만 필터링
+        notCheckList.sort();//이름순으로 정렬
+        notCheckList = notCheckList.map((val)=>{//이름을 코드로 변경
+            return usersReverseStore[val];
+        });
         //console.log();
     }
     catch (error) {
@@ -180,6 +185,7 @@ const exe = async function(){
     const his = await history(channelID);//스레드 구하기
     const ch = await check();//체크인 하지 않은 사람 리스트 생성
     const send = await sendMessage();//리스트를 문자열로 만들어 채널에 메시지 보내기
+    //console.log(notCheckList)
 }
 
 exe();
